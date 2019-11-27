@@ -1,0 +1,121 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+    <meta http-equiv="Content-Security-Policy" content="default-src * data: gap: content: https://ssl.gstatic.com; style-src * 'unsafe-inline'; script-src * 'unsafe-inline' 'unsafe-eval'">
+    <script src="components/loader.js"></script>
+    <link rel="stylesheet" href="components/loader.css">
+    <link rel="stylesheet" href="css/style.css">
+    <script src="js/app.js"></script>
+</head>
+<body>
+  
+    <h3>Cordova Google Firebase Demo</h3>
+    <div>
+        <button id="check-permission" type="button">Check Permission</button>
+        <button id="grant-permission-ios" type="button">Grant Permission (iOS)</button>
+        <button id="set-badge-number" type="button">Set Badge Number</button>
+        <button id="get-badge-number" type="button">Get Badge Number</button>
+        <button id="unregister" type="button">Unregister</button>
+        
+        <h4>Google Analytics</h4>
+        <button id="set-screen-name" type="button">Set ScreenName</button>
+        <button id="user-id" type="button">Set UserID</button>
+    </div>
+
+    <!-- The core Firebase JS SDK is always required and must be listed first -->
+<script src="https://www.gstatic.com/firebasejs/7.4.0/firebase-app.js"></script>
+
+<!-- TODO: Add SDKs for Firebase products that you want to use
+     https://firebase.google.com/docs/web/setup#available-libraries -->
+<script src="https://www.gstatic.com/firebasejs/7.4.0/firebase-analytics.js"></script>
+
+<script>
+  // Get the default database instance for an app
+var database = firebase.database();
+
+// Get a secondary database instance by URL
+var database = firebase.database('https://testapp-1234.firebaseio.com');
+  // Your web app's Firebase configuration
+  var firebaseConfig = {
+    apiKey: "AIzaSyCDu7FdXyV1EqhrAacvPkcSXmMJ_MlC0l0",
+    authDomain: "lists-5f77e.firebaseapp.com",
+    databaseURL: "https://lists-5f77e.firebaseio.com",
+    projectId: "lists-5f77e",
+    storageBucket: "lists-5f77e.appspot.com",
+    messagingSenderId: "310116984510",
+    appId: "1:310116984510:web:af4671457d316cb2d5e0ef",
+    measurementId: "G-KTLBBVY141"
+  };
+  // Initialize Firebase
+  firebase.initializeApp(firebaseConfig);
+  firebase.analytics();
+
+
+
+
+  Notification.requestPermission().then((permission) => {
+  if (permission === 'granted') {
+    console.log('Notification permission granted.');
+    // TODO(developer): Retrieve an Instance ID token for use with FCM.
+    // ...
+  } else {
+    console.log('Unable to get permission to notify.');
+  }
+});
+
+
+
+// Get Instance ID token. Initially this makes a network call, once retrieved
+// subsequent calls to getToken will return from cache.
+messaging.getToken().then((currentToken) => {
+  if (currentToken) {
+    sendTokenToServer(currentToken);
+    updateUIForPushEnabled(currentToken);
+  } else {
+    // Show permission request.
+    console.log('No Instance ID token available. Request permission to generate one.');
+    // Show permission UI.
+    updateUIForPushPermissionRequired();
+    setTokenSentToServer(false);
+  }
+}).catch((err) => {
+  console.log('An error occurred while retrieving token. ', err);
+  showToken('Error retrieving Instance ID token. ', err);
+  setTokenSentToServer(false);
+});
+
+
+
+// Callback fired if Instance ID token is updated.
+messaging.onTokenRefresh(() => {
+  messaging.getToken().then((refreshedToken) => {
+    console.log('Token refreshed.');
+    // Indicate that the new Instance ID token has not yet been sent to the
+    // app server.
+    setTokenSentToServer(false);
+    // Send Instance ID token to app server.
+    sendTokenToServer(refreshedToken);
+    // ...
+  }).catch((err) => {
+    console.log('Unable to retrieve refreshed token ', err);
+    showToken('Unable to retrieve refreshed token ', err);
+  });
+});
+
+
+</script>
+
+<!-- The core Firebase JS SDK is always required and must be listed first -->
+<script src="/__/firebase/7.4.0/firebase-app.js"></script>
+
+<!-- TODO: Add SDKs for Firebase products that you want to use
+     https://firebase.google.com/docs/web/setup#available-libraries -->
+<script src="/__/firebase/7.4.0/firebase-analytics.js"></script>
+
+<!-- Initialize Firebase -->
+<script src="/__/firebase/init.js"></script>
+
+</body>
+</html>
